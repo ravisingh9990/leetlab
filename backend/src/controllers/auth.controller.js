@@ -3,6 +3,7 @@ import { db } from "../libs/db.js";
 import { UserRole } from "../generated/prisma/index.js";
 import jwt from "jsonwebtoken";
 
+
 export const register = async (req, res) => {
     const { email, password, name } = req.body;
 
@@ -19,12 +20,12 @@ export const register = async (req, res) => {
         })
     }
 
-    const hashedpassword = await bcrypt.hash(password, 10)
+    const hashedPassword = await bcrypt.hash(password, 10)
 
     const newUser = await db.user.create({
         data: {
             email, 
-            password: hashedpassword,
+            password: hashedPassword,
             name, 
             role: UserRole.USER
         }
@@ -53,9 +54,9 @@ export const register = async (req, res) => {
 
     } catch(error)
     {
-        console.error("Eror Creating User:", error);
+        console.error("Error Creating User:", error);
         res.status(500).json({
-            error: "Eror creating user"
+            error: "Error creating user"
         })
     }
 }
@@ -137,4 +138,17 @@ export const logout = async (req, res) => {
     }
 }
 
-export const check = async (req, res) => {}
+export const check = async (req, res) => {
+    try {
+        res.status(200).json({
+            success: true,
+            message: "User Authenticated successfully",
+            user: req.user
+        })
+    } catch (error) {
+        console.error("Error checking user:", error);
+        res.status(500).json({
+            error: "Error checking user"
+        })
+    }
+}
